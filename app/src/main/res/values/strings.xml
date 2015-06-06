@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Photo Uploader</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="experimentSeries">Experiment</string>
+    <string name="description">Description</string>
+    <string name="title_activity_photo_scheduler">PhotoSchedulerActivity</string>
+</resources>
