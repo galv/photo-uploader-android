@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -34,8 +35,8 @@ public class PhotoSchedulerActivity extends FragmentActivity {
 
         setContentView(R.layout.activity_photo_scheduler);
 
-        EditText startDateTextView = (EditText) findViewById(R.id.start_date_text);
-        EditText startTimeTextView = (EditText) findViewById(R.id.start_time_text);
+        Button startDateTextView = (Button) findViewById(R.id.start_date_text);
+        Button startTimeTextView = (Button) findViewById(R.id.start_time_text);
         EditText periodTextView = (EditText) findViewById(R.id.period_text);
         Button scheduleButton = (Button) findViewById(R.id.schedule_button);
         startDateTextView.setOnClickListener(new View.OnClickListener() {
@@ -61,7 +62,7 @@ public class PhotoSchedulerActivity extends FragmentActivity {
                 if (!hasFocus) {
                     EditText editText = (EditText) v;
                     String value = editText.getText().toString();
-                    if (value.matches("[0-9]*.[0-9]*")) {
+                    if (value.matches("[0-9]*\\.[0-9]*")) {
                         double seconds = Double.parseDouble(value);
                         long milliSeconds = (long) seconds * 1000L;
                         schedule.setTimePeriodMillis(milliSeconds);
@@ -76,6 +77,10 @@ public class PhotoSchedulerActivity extends FragmentActivity {
                             editText.setText("");
                         }
                     }
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(
+                            INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
             }
         });
@@ -134,8 +139,6 @@ public class PhotoSchedulerActivity extends FragmentActivity {
             // Do something with the time chosen by the user
             ((PhotoSchedulerActivity) getActivity()).schedule.setStartTime(hourOfDay, minute);
         }
-
-
     }
 
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {

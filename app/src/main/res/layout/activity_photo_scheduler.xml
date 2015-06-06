@@ -9,13 +9,15 @@
 
     <TextView android:text="Scheduler" android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <EditText
+    <Button
         android:id="@+id/start_date_text"
+        style="@android:style/Widget.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Start Day" />
-    <EditText
+    <Button
         android:id="@+id/start_time_text"
+        style="@android:style/Widget.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Start Time" />
