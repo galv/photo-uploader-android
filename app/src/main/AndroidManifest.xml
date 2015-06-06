@@ -38,6 +38,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.danieltgalvez.photouploader.MainActivity" />
         </activity>
+
+        <service
+            android:name=".PhotoService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

@@ -14,13 +14,13 @@ public class ExperimentSchedule implements Parcelable {
     private boolean dayReady;
     private long timePeriodMillis; // in milliseconds
     private boolean periodReady;
-
+/*
     int year;
     int month;
     int day;
     int hour;
     int minute;
-
+*/
     public ExperimentSchedule() {
         startDate = Calendar.getInstance();
         startDate.setTimeInMillis(0L);
@@ -31,15 +31,17 @@ public class ExperimentSchedule implements Parcelable {
     }
 
     public void setStartDay(int year, int month, int day) {
-        this.year = year;
-        this.month = month;
-        this.day = day;
+        //this.year = year;
+        //this.month = month;
+        //this.day = day;
+        startDate.set(year, month, day);
         dayReady = true;
     }
 
     public void setStartTime(int hour, int minute) {
-        this.hour = hour;
-        this.minute = minute;
+        //this.hour = hour;
+        //this.minute = minute;
+        startDate.set(hour, minute);
         timeReady = true;
     }
 
@@ -51,6 +53,8 @@ public class ExperimentSchedule implements Parcelable {
     public long getTimePeriodMillis() {
         return timePeriodMillis;
     }
+
+    public long getStartDayMillis() {return startDate.getTimeInMillis();}
 
     public boolean timeIsReady() {
         return timeReady;

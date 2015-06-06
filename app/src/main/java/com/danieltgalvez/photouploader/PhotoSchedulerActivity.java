@@ -1,8 +1,12 @@
 package com.danieltgalvez.photouploader;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -24,6 +28,11 @@ public class PhotoSchedulerActivity extends FragmentActivity {
 
     private ExperimentSchedule schedule;
 
+    private Button startDateTextView;
+    private Button startTimeTextView;
+    private EditText periodTextView;
+    private Button scheduleButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,10 +44,10 @@ public class PhotoSchedulerActivity extends FragmentActivity {
 
         setContentView(R.layout.activity_photo_scheduler);
 
-        Button startDateTextView = (Button) findViewById(R.id.start_date_text);
-        Button startTimeTextView = (Button) findViewById(R.id.start_time_text);
-        EditText periodTextView = (EditText) findViewById(R.id.period_text);
-        Button scheduleButton = (Button) findViewById(R.id.schedule_button);
+        startDateTextView = (Button) findViewById(R.id.start_date_text);
+        startTimeTextView = (Button) findViewById(R.id.start_time_text);
+        periodTextView = (EditText) findViewById(R.id.period_text);
+        scheduleButton = (Button) findViewById(R.id.schedule_button);
         startDateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,7 +71,7 @@ public class PhotoSchedulerActivity extends FragmentActivity {
                 if (!hasFocus) {
                     EditText editText = (EditText) v;
                     String value = editText.getText().toString();
-                    if (value.matches("[0-9]*\\.[0-9]*")) {
+                    if (value.matches("[0-9]*\\.?[0-9]*")) {
                         double seconds = Double.parseDouble(value);
                         long milliSeconds = (long) seconds * 1000L;
                         schedule.setTimePeriodMillis(milliSeconds);
@@ -87,10 +96,19 @@ public class PhotoSchedulerActivity extends FragmentActivity {
         scheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (schedule.isReady()) {
+                    AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                    int alarmType = AlarmManager.RTC_WAKEUP;
+                    long period = schedule.getTimePeriodMillis();
+                    Intent intent = new Intent(PhotoSchedulerActivity.this, PhotoService.class);
+                    PendingIntent alarmIntent = PendingIntent.getBroadcast(PhotoSchedulerActivity.this, 0, intent, 0);
+                    alarmManager.setInexactRepeating(alarmType, schedule.getStartDayMillis(), period, alarmIntent);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Must enter all parameters",
+                            Toast.LENGTH_SHORT);
+                }
             }
         });
-
     }
 
     @Override
@@ -136,8 +154,10 @@ public class PhotoSchedulerActivity extends FragmentActivity {
         }
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            // Do something with the time chosen by the user
-            ((PhotoSchedulerActivity) getActivity()).schedule.setStartTime(hourOfDay, minute);
+            PhotoSchedulerActivity activity = ((PhotoSchedulerActivity) getActivity());
+            activity.schedule.setStartTime(hourOfDay, minute);
+            activity.startTimeTextView.setText(Integer.toString(hourOfDay) + ":" +
+                    Integer.toString(minute));
         }
     }
 
@@ -154,7 +174,10 @@ public class PhotoSchedulerActivity extends FragmentActivity {
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            ((PhotoSchedulerActivity) getActivity()).schedule.setStartDay(year, month, day);
+            PhotoSchedulerActivity activity = ((PhotoSchedulerActivity) getActivity());
+            activity.schedule.setStartDay(year, month, day);
+            activity.startDateTextView.setText(Integer.toString(month) + "-" +
+                    Integer.toString(day) + "-" + Integer.toString(year));
         }
     }
 }
