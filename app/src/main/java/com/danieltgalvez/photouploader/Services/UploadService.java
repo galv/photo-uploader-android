@@ -1,8 +1,10 @@
-package com.danieltgalvez.photouploader;
+package com.danieltgalvez.photouploader.Services;
 
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
+
+import com.danieltgalvez.photouploader.Model.PictureHolder;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

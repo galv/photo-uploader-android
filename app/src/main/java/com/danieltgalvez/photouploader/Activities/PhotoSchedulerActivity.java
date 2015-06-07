@@ -1,4 +1,4 @@
-package com.danieltgalvez.photouploader;
+package com.danieltgalvez.photouploader.Activities;
 
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +21,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.danieltgalvez.photouploader.Model.ExperimentSchedule;
+import com.danieltgalvez.photouploader.R;
 
 import java.util.Calendar;
 
@@ -81,7 +85,11 @@ public class PhotoSchedulerActivity extends FragmentActivity {
                         if (schedule.timeIsReady()) {
                             double timeMillis = (double) schedule.getTimePeriodMillis();
                             double time = timeMillis / 1000.0;
-                            editText.setText(Double.toString(time));
+                            String timeStr = Double.toString(time);
+                            if (timeStr.length() == 1) {
+                                timeStr = "0" + timeStr;
+                            }
+                            editText.setText(timeStr);
                         } else {
                             editText.setText("");
                         }
@@ -100,12 +108,13 @@ public class PhotoSchedulerActivity extends FragmentActivity {
                     AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                     int alarmType = AlarmManager.RTC_WAKEUP;
                     long period = schedule.getTimePeriodMillis();
-                    Intent intent = new Intent(PhotoSchedulerActivity.this, PhotoService.class);
-                    PendingIntent alarmIntent = PendingIntent.getBroadcast(PhotoSchedulerActivity.this, 0, intent, 0);
+                    Intent intent = new Intent(PhotoSchedulerActivity.this, AutomaticPhotoActivity.class);
+                    PendingIntent alarmIntent = PendingIntent.getActivity(PhotoSchedulerActivity.this, 0, intent, 0);
                     alarmManager.setInexactRepeating(alarmType, schedule.getStartDayMillis(), period, alarmIntent);
+                    Log.i("PhotoSchedulerActivity", "Camera activity scheduled.");
                 } else {
                     Toast.makeText(getApplicationContext(), "Must enter all parameters",
-                            Toast.LENGTH_SHORT);
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });

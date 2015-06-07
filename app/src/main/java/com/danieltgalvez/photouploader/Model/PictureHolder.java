@@ -1,4 +1,4 @@
-package com.danieltgalvez.photouploader;
+package com.danieltgalvez.photouploader.Model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

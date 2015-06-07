@@ -1,4 +1,4 @@
-package com.danieltgalvez.photouploader;
+package com.danieltgalvez.photouploader.Activities;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -13,6 +13,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.danieltgalvez.photouploader.Model.PictureHolder;
+import com.danieltgalvez.photouploader.R;
+import com.danieltgalvez.photouploader.Services.UploadService;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
