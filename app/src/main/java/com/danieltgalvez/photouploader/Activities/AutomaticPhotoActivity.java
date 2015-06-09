@@ -27,10 +27,11 @@ public class AutomaticPhotoActivity extends ActionBarActivity implements Surface
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i("AutomaticPhotoActivity","Activity called!");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_automatic_photo);
 
-        //camera = Camera.open();
+        camera = Camera.open();
 
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.surface_view);
         SurfaceHolder holder = surfaceView.getHolder();
@@ -41,13 +42,18 @@ public class AutomaticPhotoActivity extends ActionBarActivity implements Surface
     @Override
     protected void onPause() {
         super.onPause();
-        camera.release();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        camera = Camera.open();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i("AutomaticPhotoActivity", "onDestroy called");
+        camera.release();
     }
 
     //region SurfaceHolder.Callback
@@ -98,7 +104,7 @@ public class AutomaticPhotoActivity extends ActionBarActivity implements Surface
             Intent uploadIntent = new Intent(AutomaticPhotoActivity.this, UploadService.class);
             uploadIntent.putExtra(PictureHolder.PICTURE_HOLDER, pictureHolder);
             startService(uploadIntent);
-
+            Log.i("AutomaticPhotoActivity", "Upload Service Started!");
             AutomaticPhotoActivity.this.finish();
         }
     };

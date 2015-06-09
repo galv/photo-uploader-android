@@ -30,7 +30,7 @@ public class UploadService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d("IntentService", "Successfully enter intent service.");
+        Log.i("UploadService", "Successfully enter intent service.");
         PictureHolder pictureHolder = intent.getParcelableExtra(PictureHolder.PICTURE_HOLDER);
         String url = uploadLocation + "?time=" + pictureHolder.getDateAsLong() + "&experiment="
                 + pictureHolder.getExperiment();
