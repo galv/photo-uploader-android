@@ -36,6 +36,9 @@ public class PhotoSchedulerActivity extends FragmentActivity {
     private Button startTimeTextView;
     private EditText periodTextView;
     private Button scheduleButton;
+    private EditText experimentEditText;
+
+    public static final String EXPERIMENT_SERIES = "com.danieltgalvez.EXTRA_EXPERIMENT_SERIES";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,7 @@ public class PhotoSchedulerActivity extends FragmentActivity {
         startTimeTextView = (Button) findViewById(R.id.start_time_text);
         periodTextView = (EditText) findViewById(R.id.period_text);
         scheduleButton = (Button) findViewById(R.id.schedule_button);
+        experimentEditText = (EditText) findViewById(R.id.experiment_text);
         startDateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,10 +109,17 @@ public class PhotoSchedulerActivity extends FragmentActivity {
             @Override
             public void onClick(View view) {
                 if (schedule.isReady()) {
+
+                    String experimentSeries = experimentEditText.getText().toString();
+                    if (experimentSeries.equals("")) {
+                        experimentSeries = "unnamed_experiment";
+                    }
+
                     AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                     int alarmType = AlarmManager.RTC_WAKEUP;
                     long period = schedule.getTimePeriodMillis();
                     Intent intent = new Intent(PhotoSchedulerActivity.this, AutomaticPhotoActivity.class);
+                    intent.putExtra(EXPERIMENT_SERIES, experimentSeries);
                     PendingIntent alarmIntent = PendingIntent.getActivity(PhotoSchedulerActivity.this, 0, intent, 0);
                     alarmManager.setInexactRepeating(alarmType, schedule.getStartDayMillis(), period, alarmIntent);
                     Log.i("PhotoSchedulerActivity", "Camera activity scheduled.");

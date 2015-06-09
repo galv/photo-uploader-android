@@ -47,10 +47,11 @@ public class MainActivity extends ActionBarActivity {
                 Date currentDate = new Date();
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(currentDate);
                 String experimentName = experimentText.getText().toString();
-                if (experimentName == "") {
-                    experimentName = "default_experiment";
+                if (experimentName.equals("")) {
+                    experimentName = "unnamed_experiment";
                 }
 
+                // TODO: Write to a cache instead.
                 imageFile = new File(Environment.getExternalStorageDirectory(),
                         experimentName + "_" + timeStamp + ".jpg");
                 Uri fileUri = Uri.fromFile(imageFile);

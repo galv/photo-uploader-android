@@ -27,6 +27,11 @@
         android:layout_height="wrap_content"
         android:hint="Sampling Period (seconds)"
         android:inputType="time" />
+    <EditText
+        android:id="@+id/experiment_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Experiment Name" />
     <Button
         android:id="@+id/schedule_button"
         android:layout_width="match_parent"

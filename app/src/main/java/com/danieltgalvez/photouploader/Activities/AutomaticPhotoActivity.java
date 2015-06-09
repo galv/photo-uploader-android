@@ -1,5 +1,6 @@
 package com.danieltgalvez.photouploader.Activities;
 
+import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,10 +10,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
+import com.danieltgalvez.photouploader.Model.PictureHolder;
 import com.danieltgalvez.photouploader.R;
+import com.danieltgalvez.photouploader.Services.UploadService;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 
 public class AutomaticPhotoActivity extends ActionBarActivity implements SurfaceHolder.Callback {
 
@@ -28,6 +35,7 @@ public class AutomaticPhotoActivity extends ActionBarActivity implements Surface
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.surface_view);
         SurfaceHolder holder = surfaceView.getHolder();
         holder.addCallback(this);
+
     }
 
     @Override
@@ -50,9 +58,8 @@ public class AutomaticPhotoActivity extends ActionBarActivity implements Surface
             //Maintain backward compatibility with 2.3.6 phone we may be using.
             if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
                 holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-            holder.setFixedSize(1, 1);
+            holder.setFixedSize(400, 400);
             camera.takePicture(null, null, jpegCallback);
-            AutomaticPhotoActivity.this.finish();
 
             // OpenCV magic goes here!
         } catch (IOException e) {
@@ -61,7 +68,7 @@ public class AutomaticPhotoActivity extends ActionBarActivity implements Surface
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
-        camera.stopPreview();
+        //camera.stopPreview();
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -72,8 +79,27 @@ public class AutomaticPhotoActivity extends ActionBarActivity implements Surface
 
     Camera.PictureCallback jpegCallback = new Camera.PictureCallback() {
         public void onPictureTaken(byte[] data, Camera camera) {
-            Log.i("AutomaticPhotoActivity", "Photo taken automatically!");
-            // save stuff!
+            Toast.makeText(AutomaticPhotoActivity.this, "Photo taken!", Toast.LENGTH_LONG).show();
+
+            String experimentSeries = AutomaticPhotoActivity.this.getIntent().getStringExtra(PhotoSchedulerActivity.EXPERIMENT_SERIES);
+
+            File outputDir = AutomaticPhotoActivity.this.getCacheDir();
+            File tmpFile = null;
+            try {
+                tmpFile = File.createTempFile("tmp", "jpg", outputDir);
+                FileOutputStream fos = new FileOutputStream(tmpFile, false);
+                fos.write(data);
+                fos.close();
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+            Date date = new Date();
+            PictureHolder pictureHolder = new PictureHolder(tmpFile, experimentSeries, date);
+            Intent uploadIntent = new Intent(AutomaticPhotoActivity.this, UploadService.class);
+            uploadIntent.putExtra(PictureHolder.PICTURE_HOLDER, pictureHolder);
+            startService(uploadIntent);
+
+            AutomaticPhotoActivity.this.finish();
         }
     };
 
